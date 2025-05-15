@@ -353,150 +353,214 @@
     </div>
 
     <script>
-        // Configuración de categorías - Fácil de modificar
-        const categories = [
-            { id: "category1", name: "Aventuras", icon: "🤠" },
-            { id: "category2", name: "Misterio", icon: "🔍" },
-            { id: "category3", name: "Risa", icon: "😂" },
-            { id: "category4", name: "Animales", icon: "🐱" }
-        ];
-        
-        // Variables para almacenar datos y estado
-        let chartCreated = false;
-        let dataSubmitted = false;
-        let categoryData = [];
-        
-        // Obtener elementos DOM
-        const submitBtn = document.getElementById("submitBtn");
-        const chartContainer = document.getElementById("chart");
-        const centralBtn = document.getElementById("centralBtn");
-        const messageDisplay = document.getElementById("messageText");
-        
-        // Función para enviar los datos y crear el gráfico
-        document.getElementById("submitData").addEventListener("click", function() {
-            // Recopilar datos de las entradas
-            categoryData = categories.map(category => {
-                const input = document.getElementById(category.id);
-                return {
-                    name: category.name,
-                    icon: category.icon,
-                    value: parseInt(input.value) || 0
-                };
-            });
-            
-            // Crear o actualizar el gráfico
-            createChart();
-            
-            // Efectos visuales de éxito
-            this.innerText = "¡DATOS PROCESADOS!";
-            setTimeout(() => {
-                this.innerText = "ENVIAR REPORTE SECRETO";
-            }, 2000);
-            
-            dataSubmitted = true;
-        });
-        
-        // Función para crear el gráfico
-        function createChart() {
-            // Limpiar el contenedor del gráfico
-            chartContainer.innerHTML = "";
-            
-            // Determinar el valor máximo para escalar las barras
-            const maxValue = Math.max(...categoryData.map(cat => cat.value), 1);
-            
-            // Crear barras para cada categoría
-            categoryData.forEach(category => {
-                // Calcular altura proporcional (máximo 200px)
-                const height = (category.value / maxValue) * 200;
-                
-                // Crear contenedor de la barra
-                const barContainer = document.createElement("div");
-                barContainer.className = "bar-container";
-                
-                // Crear la barra
-                const bar = document.createElement("div");
-                bar.className = "bar";
-                bar.style.height = "0"; // Comenzar con altura 0 para la animación
-                
-                // Crear el valor numérico en la barra
-                const barValue = document.createElement("div");
-                barValue.className = "bar-value";
-                barValue.textContent = category.value;
-                
-                // Crear la etiqueta de la categoría
-                const barLabel = document.createElement("div");
-                barLabel.className = "bar-label";
-                barLabel.innerHTML = `${category.icon} ${category.name}`;
-                
-                // Añadir elementos al DOM
-                barContainer.appendChild(bar);
-                barContainer.appendChild(barValue);
-                barContainer.appendChild(barLabel);
-                chartContainer.appendChild(barContainer);
-                
-                // Activar la animación después de un pequeño retraso
-                setTimeout(() => {
-                    bar.style.height = height + "px";
-                }, 100);
-            });
-            
-            chartCreated = true;
+       // Configuración de categorías - Fácil de modificar
+const categories = [
+    { id: "category1", name: "Aventuras", icon: "🤠" },
+    { id: "category2", name: "Misterio", icon: "🔍" },
+    { id: "category3", name: "Risa", icon: "😂" },
+    { id: "category4", name: "Animales", icon: "🐱" }
+    // Puedes añadir más categorías aquí siguiendo el mismo formato
+    // { id: "category5", name: "Fantasía", icon: "✨" }
+];
+
+// Variables para almacenar datos y estado
+let chartCreated = false;
+let dataSubmitted = false;
+let categoryData = [];
+
+// Obtener elementos DOM (partes de la página web con las que interactuamos)
+const submitBtn = document.getElementById("submitData"); // El botón "Enviar Reporte Secreto"
+const chartContainer = document.getElementById("chart"); // El área donde se dibuja el gráfico
+const centralBtn = document.getElementById("centralBtn"); // El botón "Comunicar con la Central"
+const messageDisplay = document.getElementById("messageText"); // El área donde aparece el mensaje de la Central
+
+// --- Función para enviar los datos y crear el gráfico ---
+// Cuando se hace clic en el botón "Enviar Reporte Secreto":
+document.getElementById("submitData").addEventListener("click", function() {
+    // 1. Recopilar datos de las entradas de texto (los números que escribieron)
+    categoryData = categories.map(category => {
+        const input = document.getElementById(category.id); // Obtiene la entrada de número para esta categoría
+        // Convierte el texto de la entrada a un número entero. Si no es un número válido, usa 0.
+        const value = parseInt(input.value) || 0;
+        return {
+            name: category.name, // Nombre de la categoría (ej: "Aventuras")
+            icon: category.icon, // Icono de la categoría (ej: "🤠")
+            value: value >= 0 ? value : 0 // El número ingresado (asegura que no sea negativo)
+        };
+    });
+
+    // 2. Llamar a la función que crea o actualiza el gráfico
+    createChart();
+
+    // 3. Cambiar el texto del botón por un momento para dar feedback visual
+    this.innerText = "¡DATOS PROCESADOS!";
+    // Después de 2 segundos, el texto del botón vuelve a ser el original
+    setTimeout(() => {
+        this.innerText = "ENVIAR REPORTE SECRETO";
+    }, 2000);
+
+    // Marcar que ya se enviaron datos (para que la Central pueda responder)
+    dataSubmitted = true;
+});
+
+// --- Función para crear o actualizar el gráfico ---
+function createChart() {
+    // 1. Limpiar el contenedor del gráfico actual
+    chartContainer.innerHTML = "";
+
+    // 2. Determinar el valor más alto para que las barras se escalen correctamente.
+    // Usamos Math.max y si todos los valores son 0, usamos 1 para evitar dividir por cero.
+    const maxValue = Math.max(...categoryData.map(cat => cat.value), 1);
+
+    // 3. Para cada categoría de libro:
+    categoryData.forEach(category => {
+        // Calcular la altura de la barra. Si el valor es 0, la altura es 0. El máximo es 200px.
+        const height = (category.value / maxValue) * 200;
+
+        // Crear un contenedor para cada barra (la barra visual, el número y la etiqueta)
+        const barContainer = document.createElement("div");
+        barContainer.className = "bar-container";
+
+        // Crear la barra visual (el rectángulo verde)
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        // Empezamos con altura 0 para que haya una animación al aparecer
+        bar.style.height = "0";
+
+        // Crear el elemento para mostrar el número de votos encima de la barra
+        const barValue = document.createElement("div");
+        barValue.className = "bar-value";
+         // Mostrar 0 si el valor es 0, para que no quede vacío
+        barValue.textContent = category.value > 0 ? category.value : 0;
+
+
+        // Crear la etiqueta de la categoría (nombre + ícono)
+        const barLabel = document.createElement("div");
+        barLabel.className = "bar-label";
+        barLabel.innerHTML = `${category.icon} ${category.name}`; // Usa innerHTML para que reconozca los emojis
+
+        // 4. Añadir todas las partes a su contenedor (el barContainer)
+        barContainer.appendChild(bar);
+        barContainer.appendChild(barValue); // El número va *antes* de la etiqueta para que quede más arriba visualmente
+        barContainer.appendChild(barLabel);
+
+        // 5. Añadir el contenedor completo de la barra al área general del gráfico
+        chartContainer.appendChild(barContainer);
+
+        // 6. Activar la animación de la altura de la barra después de un pequeño retraso (para que se vean crecer)
+        setTimeout(() => {
+            bar.style.height = height + "px"; // Establece la altura final
+             // Ajustar la posición del valor numérico si la barra es muy corta
+             if (height < 25 && category.value > 0) { // Si la barra es muy bajita y tiene votos (>0)
+                 barValue.style.position = 'static'; // Quitar posición absoluta
+                 barValue.style.textAlign = 'center';
+                 barValue.style.marginTop = '5px';
+                 bar.style.marginBottom = '5px'; // Añadir espacio debajo de la barra
+                 barValue.style.backgroundColor = 'transparent'; // Fondo transparente para que no tape nada
+                 barValue.style.color = '#00ff00'; // Asegurar el color verde
+             } else if (height >= 25 && category.value > 0) { // Si la barra es lo suficientemente alta y tiene votos
+                  barValue.style.position = 'relative';
+                  barValue.style.top = '-30px';
+                  barValue.style.backgroundColor = '#000'; // Fondo negro para que resalte sobre la barra
+                  barValue.style.color = '#00ff00';
+                  barValue.style.padding = '5px'; // Añadir un poco de padding
+             } else { // Si el valor es 0
+                 barValue.style.position = 'static';
+                 barValue.style.textAlign = 'center';
+                 barValue.style.marginTop = '5px';
+                 barValue.style.backgroundColor = 'transparent';
+                 barValue.style.color = '#00ff00';
+             }
+        }, 100); // Pequeño retraso
+    });
+}
+
+// --- Función para comunicarse con la "Central de Datos Literarios" ---
+// Cuando se hace clic en el botón "Comunicar con la Central":
+centralBtn.addEventListener("click", function() {
+    // 1. Verificar si ya se han enviado datos al gráfico. Si no, mostrar un error.
+    if (!dataSubmitted) {
+        typeMessage("Error de comunicación: No hay datos para analizar. Envía primero el reporte secreto.");
+        return; // Detiene la función aquí
+    }
+
+    // 2. Encontrar la categoría que tiene el mayor número de votos
+    let maxCategory = categoryData[0]; // Empezamos asumiendo que la primera es la más votada
+    let allZeros = true; // Variable para chequear si todos los votos son cero
+
+    for (let cat of categoryData) { // Recorremos todas las categorías
+        if (cat.value > maxCategory.value) {
+            maxCategory = cat; // Si encontramos una con más votos, esa es ahora la más votada
         }
-        
-        // Función para comunicarse con la "Central"
-        centralBtn.addEventListener("click", function() {
-            if (!dataSubmitted) {
-                typeMessage("Error de comunicación: No hay datos para analizar. Envía primero el reporte secreto.");
-                return;
-            }
-            
-            // Encontrar la categoría con mayor valor
-            let maxCategory = categoryData[0];
-            for (let cat of categoryData) {
-                if (cat.value > maxCategory.value) {
-                    maxCategory = cat;
-                }
-            }
-            
-            // Calcular el total de votos
-            const totalVotes = categoryData.reduce((sum, cat) => sum + cat.value, 0);
-            
-            // Selector de mensajes aleatorio
-            const messageOptions = [
-                `¡Análisis completado, Agente! El tipo de libro más popular en tu misión es: ${maxCategory.icon} ${maxCategory.name} con ${maxCategory.value} votos (${Math.round(maxCategory.value/totalVotes*100)}% del total).`,
-                
-                `Reporte procesado satisfactoriamente. Datos interesantes: Los libros de ${maxCategory.icon} ${maxCategory.name} lideran las preferencias con ${maxCategory.value} votos. La Central recomienda seguir investigando estos patrones de lectura.`,
-                
-                `¡Excelente trabajo de campo, Agente! El análisis muestra una clara preferencia por ${maxCategory.icon} ${maxCategory.name}. Esta información es crucial para nuestra misión de fomento a la lectura.`
-            ];
-            
-            // Seleccionar un mensaje aleatorio
-            const selectedMessage = messageOptions[Math.floor(Math.random() * messageOptions.length)];
-            
-            // Mostrar el mensaje con efecto de escritura
-            typeMessage(selectedMessage);
-        });
-        
-        // Función para mostrar mensaje con efecto de escritura
-        function typeMessage(text) {
-            messageDisplay.textContent = "";
-            messageDisplay.classList.add("typing-effect");
-            
-            let i = 0;
-            const typingSpeed = 30; // milisegundos por carácter
-            
-            function typeChar() {
-                if (i < text.length) {
-                    messageDisplay.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(typeChar, typingSpeed);
-                } else {
-                    messageDisplay.classList.remove("typing-effect");
-                }
-            }
-            
-            typeChar();
+        if (cat.value > 0) {
+            allZeros = false; // Si encontramos al menos un voto > 0, no todos son cero
         }
+    }
+
+    // 3. Manejar el caso especial si todos los votos son cero
+    if (allZeros) {
+         typeMessage("Reporte recibido, Agente. Todos los suministros tienen 0 votos. La Central no detecta preferencias claras.");
+         return; // Detiene la función aquí
+    }
+
+    // 4. Calcular el total de votos (puede ser útil para otros mensajes o análisis futuros, aunque no lo usemos para el porcentaje ahora)
+    const totalVotes = categoryData.reduce((sum, cat) => sum + cat.value, 0);
+
+    // 5. Preparar los mensajes posibles que la Central puede enviar
+    const messageOptions = [
+        // Este es el mensaje CORREGIDO: Ya NO incluye el cálculo de porcentaje confuso.
+        `¡Análisis completado, Agente! El tipo de libro más popular en tu misión es: ${maxCategory.icon} ${maxCategory.name} con ${maxCategory.value} votos.`,
+
+        `Reporte procesado satisfactoriamente. Datos interesantes: Los libros de ${maxCategory.icon} ${maxCategory.name} lideran las preferencias con ${maxCategory.value} votos. La Central recomienda seguir investigando estos patrones de lectura.`,
+
+        `¡Excelente trabajo de campo, Agente! El análisis muestra una clara preferencia por ${maxCategory.icon} ${maxCategory.name}. Esta información es crucial para nuestra misión de fomento a la lectura.`
+    ];
+
+     // 6. Añadir un mensaje especial si hay un empate en la categoría más votada (mejora opcional)
+     // Comprobamos si hay más de un candidato con el mismo valor máximo Y si ese valor máximo es mayor a 0 (para no decir que hay empate si todos son 0)
+     const maxCandidates = categoryData.filter(cat => cat.value === maxCategory.value);
+     if (maxCandidates.length > 1 && maxCategory.value > 0) {
+        // Crear un mensaje listando las categorías empatadas
+        const tieMessage = `¡Alerta, Agente! Se detecta un empate en las preferencias principales entre: ${maxCandidates.map(cat => `${cat.icon} ${cat.name}`).join(" y ")}. La Central necesita más datos para confirmar el suministro más popular.`;
+         // Añadir este mensaje de empate al principio de la lista de opciones.
+         messageOptions.unshift(tieMessage);
+     }
+
+
+    // 7. Seleccionar un mensaje al azar de la lista de opciones
+    const selectedMessage = messageOptions[Math.floor(Math.random() * messageOptions.length)];
+
+    // 8. Mostrar el mensaje seleccionado en el área de la Central con efecto de escritura
+    typeMessage(selectedMessage);
+});
+
+// --- Función para mostrar el mensaje con efecto de escritura (como en una terminal) ---
+function typeMessage(text) {
+    // Limpiar el contenido actual del área de mensaje
+    messageDisplay.textContent = "";
+    // Añadir una clase CSS para mostrar el cursor parpadeante durante la escritura
+    messageDisplay.classList.add("typing-effect");
+
+    let i = 0;
+    const typingSpeed = 30; // Velocidad de escritura en milisegundos por carácter
+
+    // Función interna para escribir un carácter a la vez
+    function typeChar() {
+        if (i < text.length) {
+            // Añadir el siguiente carácter al texto
+            messageDisplay.textContent += text.charAt(i);
+            i++;
+            // Llamar a esta función de nuevo después de un pequeño retraso
+            setTimeout(typeChar, typingSpeed);
+        } else {
+            // Cuando termine de escribir, quitar la clase CSS para que el cursor desaparezca
+            messageDisplay.classList.remove("typing-effect");
+        }
+    }
+
+    // Iniciar el efecto de escritura llamando a la función por primera vez
+    typeChar();
+}
     </script>
 </body>
 </html>
