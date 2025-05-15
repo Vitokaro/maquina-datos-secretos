@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máquina de Datos Secreta - Agentes Secretos de Libros</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-image: linear-gradient(rgba(0, 50, 0, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 50, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            border: 2px solid #00ff00;
+        }
+
+        h1 {
+            color: #00ff00;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #00ff00;
+            font-size: 1.8rem;
+            margin-top: 30px;
+        }
+
+        /* Sección de entrada de datos */
+        .data-entry {
+            background-color: #242424;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #00aa00;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .book-category {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            background-color: #1a1a1a;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #00ff00;
+        }
+
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-icon {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            height: 40px;
+            font-size: 1.5rem;
+            text-align: center;
+            background-color: #333;
+            color: #00ff00;
+            border: 2px solid #00aa00;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .submit-btn {
+            background-color: #00aa00;
+            color: #000;
+            font-size: 1.5rem;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .submit-btn:hover {
+            background-color: #00ff00;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+        }
+
+        /* Sección del gráfico */
+        .chart-container {
+            background-color: #242424;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            min-height: 300px;
+            border: 1px solid #00aa00;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 250px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 18%;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(to top, #007700, #00ff00);
+            border-radius: 5px 5px 0 0;
+            transition: height 1s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .bar-label {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .bar-value {
+            position: relative;
+            top: -30px;
+            background-color: #000;
+            color: #00ff00;
+            padding: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Sección de la Central */
+        .central-container {
+            background-color: #242424;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #00aa00;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .central-btn {
+            background-color: #aa0000;
+            color: #fff;
+            font-size: 1.5rem;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .central-btn:hover {
+            background-color: #ff0000;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+
+        .message-display {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            border-radius: 5px;
+            min-height: 100px;
+            text-align: left;
+            font-size: 1.3rem;
+            border: 1px solid #00aa00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .typing-effect {
+            border-right: 3px solid #00ff00;
+            animation: cursor-blink 1s infinite;
+        }
+
+        @keyframes cursor-blink {
+            0%, 100% { border-color: transparent; }
+            50% { border-color: #00ff00; }
+        }
+
+        /* Efectos visuales adicionales */
+        .blink-light {
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            animation: blink 1.5s infinite;
+        }
+
+        .blink-light:nth-child(2) {
+            animation-delay: 0.5s;
+            background-color: yellow;
+        }
+
+        .blink-light:nth-child(3) {
+            animation-delay: 1s;
+            background-color: green;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .header-lights {
+            margin-bottom: 15px;
+        }
+
+        /* Efectos de pantalla */
+        .screen-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1),
+                rgba(0, 0, 0, 0.1) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .book-category {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .category-name {
+                margin-bottom: 10px;
+            }
+            
+            .bar-container {
+                width: 15%;
+            }
+            
+            .bar-label {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-lights">
+            <div class="blink-light"></div>
+            <div class="blink-light"></div>
+            <div class="blink-light"></div>
+        </div>
+        <h1>MÁQUINA DE DATOS SECRETA</h1>
+        <p>Bienvenido, Agente Literario. Ingresa los datos recolectados sobre los libros favoritos.</p>
+
+        <!-- Sección de entrada de datos -->
+        <section class="data-entry">
+            <h2>ENTRADA DE DATOS CLASIFICADOS</h2>
+            
+            <div class="book-category">
+                <div class="category-name"><span class="category-icon">🤠</span> Aventuras</div>
+                <input type="number" id="category1" min="0" max="100" value="0" class="vote-input">
+            </div>
+            
+            <div class="book-category">
+                <div class="category-name"><span class="category-icon">🔍</span> Misterio</div>
+                <input type="number" id="category2" min="0" max="100" value="0" class="vote-input">
+            </div>
+            
+            <div class="book-category">
+                <div class="category-name"><span class="category-icon">😂</span> Risa</div>
+                <input type="number" id="category3" min="0" max="100" value="0" class="vote-input">
+            </div>
+            
+            <div class="book-category">
+                <div class="category-name"><span class="category-icon">🐱</span> Animales</div>
+                <input type="number" id="category4" min="0" max="100" value="0" class="vote-input">
+            </div>
+            
+            <button id="submitData" class="submit-btn">ENVIAR REPORTE SECRETO</button>
+        </section>
+
+        <!-- Sección del gráfico -->
+        <section class="chart-container">
+            <h2>ANÁLISIS GRÁFICO</h2>
+            <div id="chart">
+                <!-- El gráfico se generará aquí dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Sección de la Central -->
+        <section class="central-container">
+            <h2>CENTRAL DE DATOS LITERARIOS</h2>
+            <button id="centralBtn" class="central-btn">COMUNICAR CON LA CENTRAL</button>
+            <div class="message-display" id="centralMessage">
+                <div class="screen-effect"></div>
+                <span id="messageText">Esperando datos para análisis...</span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Configuración de categorías - Fácil de modificar
+        const categories = [
+            { id: "category1", name: "Aventuras", icon: "🤠" },
+            { id: "category2", name: "Misterio", icon: "🔍" },
+            { id: "category3", name: "Risa", icon: "😂" },
+            { id: "category4", name: "Animales", icon: "🐱" }
+        ];
+        
+        // Variables para almacenar datos y estado
+        let chartCreated = false;
+        let dataSubmitted = false;
+        let categoryData = [];
+        
+        // Obtener elementos DOM
+        const submitBtn = document.getElementById("submitBtn");
+        const chartContainer = document.getElementById("chart");
+        const centralBtn = document.getElementById("centralBtn");
+        const messageDisplay = document.getElementById("messageText");
+        
+        // Función para enviar los datos y crear el gráfico
+        document.getElementById("submitData").addEventListener("click", function() {
+            // Recopilar datos de las entradas
+            categoryData = categories.map(category => {
+                const input = document.getElementById(category.id);
+                return {
+                    name: category.name,
+                    icon: category.icon,
+                    value: parseInt(input.value) || 0
+                };
+            });
+            
+            // Crear o actualizar el gráfico
+            createChart();
+            
+            // Efectos visuales de éxito
+            this.innerText = "¡DATOS PROCESADOS!";
+            setTimeout(() => {
+                this.innerText = "ENVIAR REPORTE SECRETO";
+            }, 2000);
+            
+            dataSubmitted = true;
+        });
+        
+        // Función para crear el gráfico
+        function createChart() {
+            // Limpiar el contenedor del gráfico
+            chartContainer.innerHTML = "";
+            
+            // Determinar el valor máximo para escalar las barras
+            const maxValue = Math.max(...categoryData.map(cat => cat.value), 1);
+            
+            // Crear barras para cada categoría
+            categoryData.forEach(category => {
+                // Calcular altura proporcional (máximo 200px)
+                const height = (category.value / maxValue) * 200;
+                
+                // Crear contenedor de la barra
+                const barContainer = document.createElement("div");
+                barContainer.className = "bar-container";
+                
+                // Crear la barra
+                const bar = document.createElement("div");
+                bar.className = "bar";
+                bar.style.height = "0"; // Comenzar con altura 0 para la animación
+                
+                // Crear el valor numérico en la barra
+                const barValue = document.createElement("div");
+                barValue.className = "bar-value";
+                barValue.textContent = category.value;
+                
+                // Crear la etiqueta de la categoría
+                const barLabel = document.createElement("div");
+                barLabel.className = "bar-label";
+                barLabel.innerHTML = `${category.icon} ${category.name}`;
+                
+                // Añadir elementos al DOM
+                barContainer.appendChild(bar);
+                barContainer.appendChild(barValue);
+                barContainer.appendChild(barLabel);
+                chartContainer.appendChild(barContainer);
+                
+                // Activar la animación después de un pequeño retraso
+                setTimeout(() => {
+                    bar.style.height = height + "px";
+                }, 100);
+            });
+            
+            chartCreated = true;
+        }
+        
+        // Función para comunicarse con la "Central"
+        centralBtn.addEventListener("click", function() {
+            if (!dataSubmitted) {
+                typeMessage("Error de comunicación: No hay datos para analizar. Envía primero el reporte secreto.");
+                return;
+            }
+            
+            // Encontrar la categoría con mayor valor
+            let maxCategory = categoryData[0];
+            for (let cat of categoryData) {
+                if (cat.value > maxCategory.value) {
+                    maxCategory = cat;
+                }
+            }
+            
+            // Calcular el total de votos
+            const totalVotes = categoryData.reduce((sum, cat) => sum + cat.value, 0);
+            
+            // Selector de mensajes aleatorio
+            const messageOptions = [
+                `¡Análisis completado, Agente! El tipo de libro más popular en tu misión es: ${maxCategory.icon} ${maxCategory.name} con ${maxCategory.value} votos (${Math.round(maxCategory.value/totalVotes*100)}% del total).`,
+                
+                `Reporte procesado satisfactoriamente. Datos interesantes: Los libros de ${maxCategory.icon} ${maxCategory.name} lideran las preferencias con ${maxCategory.value} votos. La Central recomienda seguir investigando estos patrones de lectura.`,
+                
+                `¡Excelente trabajo de campo, Agente! El análisis muestra una clara preferencia por ${maxCategory.icon} ${maxCategory.name}. Esta información es crucial para nuestra misión de fomento a la lectura.`
+            ];
+            
+            // Seleccionar un mensaje aleatorio
+            const selectedMessage = messageOptions[Math.floor(Math.random() * messageOptions.length)];
+            
+            // Mostrar el mensaje con efecto de escritura
+            typeMessage(selectedMessage);
+        });
+        
+        // Función para mostrar mensaje con efecto de escritura
+        function typeMessage(text) {
+            messageDisplay.textContent = "";
+            messageDisplay.classList.add("typing-effect");
+            
+            let i = 0;
+            const typingSpeed = 30; // milisegundos por carácter
+            
+            function typeChar() {
+                if (i < text.length) {
+                    messageDisplay.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeChar, typingSpeed);
+                } else {
+                    messageDisplay.classList.remove("typing-effect");
+                }
+            }
+            
+            typeChar();
+        }
+    </script>
+</body>
+</html>
